@@ -6,6 +6,7 @@ import ButtonAuthen from "../../components/Buttons/ButtonAuthen/ButtonAuthen";
 import shakeEffect from "../../animations/shakeEffect";
 import { Link } from "react-router-dom";
 import validator from "validator";
+import { postFetch } from "../../functions/postFetch";
 
 export default function Register() {
   const [username, setUsername] = useState("");
@@ -15,6 +16,7 @@ export default function Register() {
 
   // error is an object: { status: boolean, message: string }
   const [error, setError] = useState({ status: false, message: "" });
+  const [isLoading, setIsLoading] = useState(false);
 
   const usernameRef = useRef();
   const emailRef = useRef();
@@ -43,7 +45,7 @@ export default function Register() {
     setError((prev) => ({ ...prev, status: false, message: "" }));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     reset();
 
@@ -59,6 +61,7 @@ export default function Register() {
       if (!email) emailRef.current.style.borderColor = "red";
       if (!password) passwordRef.current.style.borderColor = "red";
       if (!passwordCheck) passwordCheckRef.current.style.borderColor = "red";
+      return;
     }
 
     ///password checking
@@ -72,6 +75,7 @@ export default function Register() {
       passwordCheckRef.current.style.borderColor = "red";
       setPassword("");
       setPasswordCheck("");
+      return;
     }
     if (!validator.isEmail(email)) {
       setError((prev) => ({
@@ -81,7 +85,9 @@ export default function Register() {
       }));
       setEmail("");
       emailRef.current.style.borderColor = "red";
+      return;
     }
+    await postFetch({ data: { username, email, password } });
   }
 
   return (
