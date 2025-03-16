@@ -1,0 +1,15 @@
+@font-face {
+  font-family: "mainFont";
+  src: url("./assets/fonts/Outfit-Regular.ttf");
+}
+
+* {
+  margin: 0;
+}
+
+body {
+  font-family: "mainFont";
+  font-size: 22px;
+  color: white;
+  background-color: rgb(16, 16, 16);
+}
