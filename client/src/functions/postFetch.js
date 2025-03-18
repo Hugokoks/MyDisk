@@ -1,16 +1,36 @@
-export async function postFetch({ data, setError, isLoading }) {
+
+export async function postFetch({ data, setError = () => { }, setIsLoading = () => { }, url }) {
+  const controller = new AbortController();
+  const signal = controller.signal;
+
   try {
-    const res = await fetch("http://127.0.0.1:8888/api/register", {
+    setIsLoading(true)
+    const res = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
+      signal
     });
 
     const json = await res.json();
+
     console.log(json);
+    if (json.status === "error") throw json
+
+    return json;
+
   } catch (err) {
-    console.log(err.message);
+
+    setError(prev => ({ ...prev, status: true, message: err.message }));
   }
+  finally {
+    setIsLoading(false)
+  }
+  return () => {
+    controller.abort();
+
+  }
+
 }

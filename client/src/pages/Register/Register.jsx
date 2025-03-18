@@ -4,24 +4,35 @@ import styles from "./index.module.css";
 import InputAuthen from "../../components/Inputs/InputAuthen/InputAuthen";
 import ButtonAuthen from "../../components/Buttons/ButtonAuthen/ButtonAuthen";
 import shakeEffect from "../../animations/shakeEffect";
-import { Link } from "react-router-dom";
-import validator from "validator";
+import { Link, useNavigate } from "react-router-dom";
 import { postFetch } from "../../functions/postFetch";
+import { apis } from "./../../config";
+import { useRegister } from "../../contexts/RegisterContext";
+import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 export default function Register() {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordCheck, setPasswordCheck] = useState("");
+  const navigate = useNavigate();
 
-  // error is an object: { status: boolean, message: string }
-  const [error, setError] = useState({ status: false, message: "" });
-  const [isLoading, setIsLoading] = useState(false);
-
-  const usernameRef = useRef();
-  const emailRef = useRef();
-  const passwordRef = useRef();
-  const passwordCheckRef = useRef();
+  const {
+    username,
+    email,
+    password,
+    passwordCheck,
+    setUsername,
+    setEmail,
+    setPassword,
+    setPasswordCheck,
+    error,
+    isLoading,
+    setError,
+    setIsLoading,
+    usernameRef,
+    emailRef,
+    passwordRef,
+    passwordCheckRef,
+    handleClientErrors,
+    inputStyle
+  } = useRegister();
 
   // Reset error after 500ms if error is active
   useEffect(() => {
@@ -35,13 +46,23 @@ export default function Register() {
       }, 500);
     }
     return () => clearTimeout(timer);
-  }, [error]);
+  }, [error, setError]);
+
+
+  /////set error already used email and username after fetch 
+  useEffect(() => {
+
+    if (error.message === "email already exists") emailRef.current.style.borderColor = inputStyle.error;
+    if (error.message === "username already exists") usernameRef.current.style.borderColor = inputStyle.error;
+
+  }, [setError, error, emailRef, usernameRef, inputStyle])
+
 
   function reset() {
-    usernameRef.current.style.borderColor = "rgb(133, 127, 127)";
-    emailRef.current.style.borderColor = "rgb(133, 127, 127)";
-    passwordRef.current.style.borderColor = "rgb(133, 127, 127)";
-    passwordCheckRef.current.style.borderColor = "rgb(133, 127, 127)";
+    usernameRef.current.style.borderColor = inputStyle.default;
+    emailRef.current.style.borderColor = inputStyle.default;
+    passwordRef.current.style.borderColor = inputStyle.default;
+    passwordCheckRef.current.style.borderColor = inputStyle.default;
     setError((prev) => ({ ...prev, status: false, message: "" }));
   }
 
@@ -49,54 +70,25 @@ export default function Register() {
     e.preventDefault();
     reset();
 
-    ////empty inputs checking
-    if (!username || !email || !password || !passwordCheck) {
-      setError((prev) => ({
-        ...prev,
-        status: true,
-        message: "Please fill all inputs",
-      }));
+    const hasError = handleClientErrors();
+    if (!hasError) {
 
-      if (!username) usernameRef.current.style.borderColor = "red";
-      if (!email) emailRef.current.style.borderColor = "red";
-      if (!password) passwordRef.current.style.borderColor = "red";
-      if (!passwordCheck) passwordCheckRef.current.style.borderColor = "red";
-      return;
-    }
+      const res = await postFetch({ data: { username, email, password, passwordCheck }, url: apis.create_register, setError, setIsLoading });
 
-    ///password checking
-    if (password !== passwordCheck) {
-      setError((prev) => ({
-        ...prev,
-        status: true,
-        message: "Passwords do not match",
-      }));
-      passwordRef.current.style.borderColor = "red";
-      passwordCheckRef.current.style.borderColor = "red";
-      setPassword("");
-      setPasswordCheck("");
-      return;
+      if (res.status === "ok") {
+
+        navigate("/email_redirect");
+      }
     }
-    if (!validator.isEmail(email)) {
-      setError((prev) => ({
-        ...prev,
-        status: true,
-        message: "please enter valid email",
-      }));
-      setEmail("");
-      emailRef.current.style.borderColor = "red";
-      return;
-    }
-    await postFetch({ data: { username, email, password } });
   }
 
   return (
     <motion.div
-      className={styles.container}
+      className={styles.containerReg}
       variants={shakeEffect}
       animate={error.status ? "shake" : "still"}
     >
-      <img src="./drive.png" width="120px" alt="Drive Logo" />
+      <img src="./drive.png" width="100px" alt="DriveLogo" />
       <p className={styles.title}>Register</p>
       <form className={styles.form} onSubmit={handleSubmit}>
         <InputAuthen
@@ -133,6 +125,7 @@ export default function Register() {
         already have account? <Link to="/login">login</Link>
       </p>
       {error.message !== "" && <p className={styles.error}>{error.message}</p>}
+      {isLoading && <LoadingSpinner />}
     </motion.div>
   );
 }

@@ -1,7 +1,7 @@
 .button {
   width: 250px;
-  height: 55px;
-  font-size: 26px;
+  height: 50px;
+  font-size: 22px;
   font-weight: bold;
   border-radius: 5px;
   cursor: pointer;
@@ -9,6 +9,9 @@
   color: white;
   transition: 0.1s;
 }
+
 .button:hover {
   background-color: #49a1ff;
+
+
 }
