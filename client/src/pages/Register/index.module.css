@@ -1,18 +1,9 @@
-.containerReg {
-  width: 650px;
-  height: 700px;
-  margin: 100px auto;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
 .title {
   font-size: 45px;
   margin-top: 30px;
   margin-bottom: 30px;
   font-weight: bold;
+
 }
 
 .form {

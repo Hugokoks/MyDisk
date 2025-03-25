@@ -1,17 +1,17 @@
 import express from "express";
-import createUser from "../SQL/CreateUser.js";
+import userCreate from "../SQL/userCreate.js";
 import asyncHandler from "../middlewares/asyncHandler.js";
 import validator from "validator";
 import AppError from "../utils/appError.js";
 
 const router = express.Router();
 
-router.post("/register", asyncHandler(async (req, res) => {
+router.post("/user", asyncHandler(async (req, res) => {
   const { username, email, password, passwordCheck } = req.body;
 
   handleClientErrors(username, email, password, passwordCheck);
 
-  await createUser({ username, email, password });
+  await userCreate({ username, email, password });
 
   res.status(201).json({ status: "ok", message: "user registered" });
 

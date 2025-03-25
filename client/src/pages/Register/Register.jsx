@@ -1,13 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 import styles from "./index.module.css";
 import InputAuthen from "../../components/Inputs/InputAuthen/InputAuthen";
-import ButtonAuthen from "../../components/Buttons/ButtonAuthen/ButtonAuthen";
-import shakeEffect from "../../animations/shakeEffect";
+import ButtonMain from "../../components/Buttons/ButtonMain/ButtonMain";
 import { Link, useNavigate } from "react-router-dom";
 import { postFetch } from "../../functions/postFetch";
 import { apis } from "./../../config";
 import { useRegister } from "../../contexts/RegisterContext";
+import autoResetError from "../../functions/autoResetError";
+import Cookies from "js-cookie";
+import LogRegBox from "../../components/LogRegBox/LogRegBox";
+import { inputStyle } from "../../components/Inputs/InputAuthen/inputStyles";
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 export default function Register() {
@@ -31,21 +33,11 @@ export default function Register() {
     passwordRef,
     passwordCheckRef,
     handleClientErrors,
-    inputStyle
   } = useRegister();
 
   // Reset error after 500ms if error is active
   useEffect(() => {
-    let timer;
-    if (error.status) {
-      timer = setTimeout(() => {
-        setError((prev) => ({
-          ...prev,
-          status: false,
-        }));
-      }, 500);
-    }
-    return () => clearTimeout(timer);
+    autoResetError(error, setError);
   }, [error, setError]);
 
 
@@ -55,7 +47,7 @@ export default function Register() {
     if (error.message === "email already exists") emailRef.current.style.borderColor = inputStyle.error;
     if (error.message === "username already exists") usernameRef.current.style.borderColor = inputStyle.error;
 
-  }, [setError, error, emailRef, usernameRef, inputStyle])
+  }, [setError, error, emailRef, usernameRef])
 
 
   function reset() {
@@ -73,23 +65,18 @@ export default function Register() {
     const hasError = handleClientErrors();
     if (!hasError) {
 
-      const res = await postFetch({ data: { username, email, password, passwordCheck }, url: apis.create_register, setError, setIsLoading });
+      const res = await postFetch({ data: { username, email, password, passwordCheck }, url: apis.user_create, setError, setIsLoading });
 
       if (res.status === "ok") {
-
+        Cookies.set("app-email", email, { expires: 1 });
         navigate("/email_redirect");
       }
     }
   }
 
   return (
-    <motion.div
-      className={styles.containerReg}
-      variants={shakeEffect}
-      animate={error.status ? "shake" : "still"}
-    >
-      <img src="./drive.png" width="100px" alt="DriveLogo" />
-      <p className={styles.title}>Register</p>
+    <LogRegBox error={error} title="Register">
+
       <form className={styles.form} onSubmit={handleSubmit}>
         <InputAuthen
           placeholder="username..."
@@ -119,13 +106,15 @@ export default function Register() {
           handleChange={(e) => setPasswordCheck(e.target.value)}
           ref={passwordCheckRef}
         />
-        <ButtonAuthen>Register</ButtonAuthen>
+        <ButtonMain>Register</ButtonMain>
       </form>
       <p className={styles.link}>
         already have account? <Link to="/login">login</Link>
       </p>
       {error.message !== "" && <p className={styles.error}>{error.message}</p>}
       {isLoading && <LoadingSpinner />}
-    </motion.div>
+
+
+    </LogRegBox>
   );
 }

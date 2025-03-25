@@ -1,12 +1,11 @@
-import sql from "mssql";
 import bcypt from "bcrypt";
 import { nanoid } from "nanoid";
 import { getPool, tables } from "./sqlConfig.js";
-import AppError from "./../utils/appError.js";
-import generateToken from "./../utils/generateToken.js";
-import emailSender from "./../utils/emailSender.js";
+import AppError from "../utils/appError.js";
+import generateToken from "../utils/generateToken.js";
+import sendEmail from "../utils/emailSender.js";
 
-async function createUser({ username, password, email }) {
+async function userCreate({ username, password, email }) {
   const pool = await getPool();
 
   ////creating unique id for user
@@ -50,7 +49,8 @@ async function createUser({ username, password, email }) {
   ////SQL CREATE request token validation
 
   const token = generateToken();
-  await emailSender(email);
+
+  sendEmail(email, token);
 
   await pool
     .request()
@@ -62,4 +62,4 @@ async function createUser({ username, password, email }) {
     );
 }
 
-export default createUser;
+export default userCreate;

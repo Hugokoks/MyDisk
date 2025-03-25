@@ -1,11 +1,12 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
-dotenv.config({ path: "./../configEmailProvider.env" });
+dotenv.config({ path: "configEmailProvider.env" });
 
-console.log(process.env.EMAIL_USER);
-console.log(process.env.EMAIL_PASSWORD);
-async function sendEmail(email) {
+
+async function sendEmail(email, token) {
+
+  console.log(email);
   // Vytvoříme transportér s Gmailem
   let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -13,22 +14,30 @@ async function sendEmail(email) {
     secure: true, // port 465 (SSL)
     auth: {
       user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD,
+      pass: process.env.EMAIL_APPKEY,
     },
   });
-
+  const html = `
+  <h1>Validation emial</h1>
+  <p>please click on link below</p>
+  <a href="http://localhost:5173/user_validation?token=${token}">Link</a>
+`
   // Odeslání emailu
   let info = await transporter.sendMail({
     from: `"Odesílatel" <${process.env.EMAIL_USER}>`,
     to: email,
     subject: "Testovací email",
     text: "Toto je textová verze emailu",
-    html: "<b>Toto je HTML verze emailu</b>",
+    html: html,
   });
 
   console.log("Zpráva byla odeslána: %s", info.messageId);
 }
 
-//export default sendEmail;
 
-//sendEmail().catch(console.error);
+
+export default sendEmail;
+
+
+
+

@@ -3,7 +3,9 @@ import dotenv from "dotenv";
 import cors from "cors";
 import errorHandler from "./middlewares/errorHandler.js";
 
-import POST_register from "./routes/POST_register.js";
+import CREATE_user from "./routes/CREATE_user.js";
+import PATCH_userValidate from "./routes/PATCH_userValidate.js";
+import POST_userLogin from "./routes/POST_userLogin.js";
 
 dotenv.config({ path: "./configServer.env" });
 
@@ -12,7 +14,10 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.use("/api", POST_register);
+///API's
+app.use("/api/create", CREATE_user);
+app.use("/api/patch", PATCH_userValidate);
+app.use("/api/post", POST_userLogin);
 
 app.use(errorHandler);
 

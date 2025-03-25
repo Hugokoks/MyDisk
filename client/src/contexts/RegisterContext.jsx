@@ -1,13 +1,10 @@
 import { createContext, useContext, useRef, useState } from "react"
 import validator from "validator";
+import { inputStyle } from "../components/Inputs/InputAuthen/inputStyles";
 
 const RegisterContext = createContext();
 
 
-const inputStyle = {
-    error: "red",
-    default: "rgb(133, 127, 127)"
-}
 
 function RegisterProvider({ children }) {
     const [username, setUsername] = useState("");
@@ -88,7 +85,6 @@ function RegisterProvider({ children }) {
                 setError,
                 setIsLoading,
                 handleClientErrors,
-                inputStyle
             }}>
             {children}
         </RegisterContext.Provider>

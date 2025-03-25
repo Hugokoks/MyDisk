@@ -1,13 +1,13 @@
 .input {
-  width: 400px;
+  width: 300px;
   height: 45px;
-  border-radius: 5px;
-  border: 3px rgb(133, 127, 127) solid;
-  font-size: 22px;
+  border: none;
+  font-size: 18px;
   padding-left: 15px;
-  background-color: rgb(16, 16, 16);
+  background-color: rgb(21, 21, 21);
   color: white;
   outline: none;
+  border-bottom: 1px white solid;
 }
 
 .input:focus {
