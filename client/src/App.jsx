@@ -9,6 +9,8 @@ const Register = lazy(() => import("./pages/Register/Register"));
 const EmailRedirect = lazy(() => import("./pages/EmailRedirect/EmailRedirect"));
 const UserValidation = lazy(() => import("./pages/UserValidation/UserValidation"));
 const Login = lazy(() => import("./pages/Login/Login"));
+const Disk = lazy(() => import("./pages/Disk/Disk"));
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -19,7 +21,7 @@ export default function App() {
           <Route path="login" element={<LoginProvider><Login /></LoginProvider>} />
           <Route path="email_redirect" element={<EmailRedirect />} />
           <Route path="user_validation" element={<UserValidation />} />
-          <Route path="test" element={<LoadingPage />} />
+          <Route path="disk" element={<Disk />} />
 
         </Routes>
       </Suspense>

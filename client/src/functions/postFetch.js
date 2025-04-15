@@ -1,5 +1,5 @@
 
-export async function postFetch({ data, setError = () => { }, setIsLoading = () => { }, url }) {
+export async function postFetch({ data, setError = () => { }, setIsLoading = () => { }, url, token = "" }) {
   const controller = new AbortController();
   const signal = controller.signal;
 
@@ -9,6 +9,8 @@ export async function postFetch({ data, setError = () => { }, setIsLoading = () 
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+
       },
       body: JSON.stringify(data),
       signal

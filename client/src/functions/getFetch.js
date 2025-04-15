@@ -1,16 +1,17 @@
 
-export async function patchFetch({ data = {}, setError = () => { }, setIsLoading = () => { }, url }) {
+export async function getFetch({ setError = () => { }, setIsLoading = () => { }, url, token = "" }) {
     const controller = new AbortController();
     const signal = controller.signal;
 
     try {
         setIsLoading(true)
         const res = await fetch(url, {
-            method: "PATCH",
+            method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+
             },
-            body: JSON.stringify(data),
             signal
         });
 

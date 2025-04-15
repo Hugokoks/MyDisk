@@ -21,7 +21,7 @@ async function userLogin(username, password) {
 
     if (!isMatch) throw new AppError("wrong username or password", 401);
 
-    return createJWT();
+    return createJWT(user.id);
 
 }
 

@@ -2,7 +2,7 @@ import styles from './index.module.css'
 import InputAuthen from '../../components/Inputs/InputAuthen/InputAuthen'
 import ButtonMain from '../../components/Buttons/ButtonMain/ButtonMain';
 import { useLogin } from '../../contexts/LoginContext';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import autoResetError from '../../functions/autoResetError';
 import LogRegBox from '../../components/LogRegBox/LogRegBox';
@@ -12,6 +12,7 @@ import { apis } from '../../config';
 import LoadingSpinner from "../../components/LoadingSpinner/LoadingSpinner";
 
 function Login() {
+    const navigate = useNavigate();
 
     const {
         username,
@@ -48,7 +49,7 @@ function Login() {
 
             if (response.status === 'ok') {
                 localStorage.setItem("token", response.token);
-
+                navigate("/disk")
             }
 
         }

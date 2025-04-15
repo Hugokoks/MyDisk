@@ -68,7 +68,7 @@ export default function Register() {
       const res = await postFetch({ data: { username, email, password, passwordCheck }, url: apis.user_create, setError, setIsLoading });
 
       if (res.status === "ok") {
-        Cookies.set("app-email", email, { expires: 1 });
+        Cookies.set("app_email", email, { expires: 1 });
         navigate("/email_redirect");
       }
     }
